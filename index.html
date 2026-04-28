@@ -1,60 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
             --primary: #2563eb;
             --secondary: #64748b;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --text: #1e293b;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text);
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
         }
-        .container {
+
+        .main-wrapper {
+            display: flex;
+            gap: 2rem;
+            max-width: 950px;
+            width: 100%;
+        }
+
+        .calc-container,
+        .info-container {
             background: white;
             padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            text-align: center;
-            width: 90%;
-            max-width: 420px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            flex: 1;
         }
+
+        .calc-container {
+            text-align: center;
+        }
+
+        /* -- Models Grid -- */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+
+        .model-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+            position: relative;
+        }
+
+        .model-card:hover {
+            border-color: var(--primary);
+            background: #f0f7ff;
+            transform: translateY(-2px);
+        }
+
+        .model-card.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+        }
+
+        .model-img {
+            width: 50px;
+            height: 50px;
+            background: #cbd5e1;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* -- Standard Inputs & Buttons -- */
         input {
             width: 80%;
             padding: 1.2rem;
-            font-size: 1.8rem;
+            font-size: 2rem;
             border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            margin: 1rem 0;
+            border-radius: 15px;
+            margin: 1.2rem 0;
             text-align: center;
             font-weight: bold;
         }
+
         .btn-group {
             display: flex;
             gap: 10px;
-            justify-content: center;
             margin-top: 1rem;
         }
+
         button {
-            padding: 0.8rem 1.5rem;
+            flex: 1;
+            padding: 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
-            transition: transform 0.1s;
+            font-size: 0.95rem;
         }
-        button:active { transform: scale(0.95); }
-        .btn-save { background: var(--primary); color: white; }
-        .btn-load { background: var(--secondary); color: white; }
-        
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-load {
+            background: var(--secondary);
+            color: white;
+        }
+
         .result-box {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -62,65 +131,270 @@
             border-radius: 15px;
             border: 2px dashed var(--primary);
         }
+
         .height-value {
             font-size: 3rem;
             font-weight: 800;
             color: var(--primary);
         }
+
+        /* -- Info Panel Section -- */
+        .info-container {
+            border: 1px solid #e2e8f0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            display: none;
+            /* Initially hidden on mobile/desk */
+        }
+
+        .info-container.active {
+            opacity: 1;
+            visibility: visible;
+            display: block;
+            /* Show when active */
+        }
+
+        .dynamic-img {
+            width: 100%;
+            height: 200px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .dynamic-img img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .info-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .desc-text {
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 1.5rem;
+        }
+
+        .ergonomic-tips {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.2rem;
+            border-top: 3px solid var(--secondary);
+        }
+
+        .tip-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .citation {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 0.6rem;
+            color: #64748b;
+        }
+
+        /* -- Responsive Adjustments -- */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            input {
+                font-size: 1.5rem;
+            }
+
+            .height-value {
+                font-size: 2.8rem;
+            }
+
+            .info-container {
+                display: none;
+            }
+
+            .info-container.active {
+                display: block;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2 style="margin-top:0">Table Height Tool</h2>
-    <p>Enter your seated elbow height:</p>
-    
-    <input type="text" id="elbowHeight" maxlength="5" placeholder="00" oninput="calculateHeight()">
-    
-    <div class="btn-group">
-        <button class="btn-save" onclick="savePreset()">Save Preset</button>
-        <button class="btn-load" onclick="loadPreset()">Load My Height</button>
+    <div class="main-wrapper">
+        <div class="calc-container">
+            <h2 style="margin-top:0">ADA Table Tool</h2>
+            <p style="margin-top:0; font-size: 0.9rem;">Click your model for a preset, or enter your custom elbow height below.</p>
+
+            <div class="model-grid">
+                <div class="model-card" onclick="setChair('Permobil F5', 27, 'Permobil F5 Corpus')">
+                    <div class="model-img" style="background:#3b82f6">P</div>
+                    <strong>Permobil F5</strong><br>Power
+                </div>
+                <div class="model-card" onclick="setChair('Invacare Tracer', 24.5, 'Invacare Tracer EX2')">
+                    <div class="model-img" style="background:#10b981">I</div>
+                    <strong>Invacare Tracer</strong><br>Manual
+                </div>
+                <div class="model-card" onclick="setChair('Quickie 2', 23.5, 'Quickie Q-Series')">
+                    <div class="model-img" style="background:#f59e0b">Q</div>
+                    <strong>Quickie 2</strong><br>Ultralight
+                    <p style="font-size:0.7rem; margin:3px 0 0">(Adjustable)</p>
+                </div>
+                <div class="model-card" onclick="setChair('TiLite ZRA', 22.5, 'TiLite ZRA/TRA')">
+                    <div class="model-img" style="background:#6366f1">T</div>
+                    <strong>TiLite ZRA</strong><br>Rigid
+                </div>
+            </div>
+
+            <input type="letter" id="elbowHeight" placeholder="--" maxlength="4" oninput="calculate()">
+            <p style="margin-top: -10px; font-size: 0.8rem; color: var(--secondary);">Measured from floor to resting
+                elbow (in inches).</p>
+
+            <div class="btn-group">
+                <button class="btn-save" onclick="save()">Save Profile</button>
+                <button class="btn-load" onclick="load()">Load Profile</button>
+            </div>
+
+            <div class="result-box">
+                <p style="margin:0; opacity: 0.8; font-weight: 500;">Optimal Table Height:</p>
+                <div class="height-value" id="output">--</div>
+            </div>
+        </div>
+
+        <div class="info-container" id="infoPanel">
+            <div class="dynamic-img" id="panelImgPlaceholder">
+                <span style="color: #94a3b8;">Image Unavailable</span>
+            </div>
+            <h3 class="info-title" id="panelTitle">Select a Chair</h3>
+            <p class="desc-text" id="panelDesc">Please click on a wheelchair model from the calculator to view its
+                standard specifications and see helpful information about your specific chair type.</p>
+
+            <div class="ergonomic-tips">
+                <h4 style="margin-top: 0; color: #475569;">Universal Mobility Tips:</h4>
+                <div class="tip-item">
+                    <span>📏</span> <strong>Knee Clearance:</strong> ADA requires a minimum 27" height from floor to
+                    desk bottom (apron) [1].
+                </div>
+                <div class="tip-item">
+                    <span>🔄</span> <strong>Armrests:</strong> Ensure armrests fit *under* the table or are adjustable
+                    to maintain a neutral shoulder.
+                </div>
+                <div class="citation">
+                    [1] U.S. Access Board, “U.S. Access Board - About the ADA Guides,” www.access-board.gov.
+                    https://www.access-board.gov/ada/guides/
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="result-box">
-        <p style="margin-top:0; color: var(--secondary);">Set Table To:</p>
-        <div class="height-value" id="output">--</div>
-    </div>
-</div>
 
-<script>
-    function calculateHeight() {
-        const val = document.getElementById('elbowHeight').value;
-        const output = document.getElementById('output');
-        
-        if (val && val > 0) {
-            const result = (parseFloat(val) + 0.5).toFixed(1); 
-            output.innerText = result + '"';
-        } else {
-            output.innerText = '--';
-        }
-    }
+    <script>
+        // This runs as soon as the page finishes loading
+        window.onload = function () {
+            // We target the first model card manually to trigger the initial setup
+            const firstCard = document.querySelector('.model-grid .model-card');
+            setChair('Permobil F5', 27, 'Permobil F5 Corpus', firstCard);
+        };
+        // Chair data repository (expandable)
+        // Add 'imgSrc' with the path to your wheelchair image
+        const chairData = {
+            'Permobil F5 Corpus': {
+                imgSrc: 'permobil_f5.webp', // Replace with your actual path
+                bgColor: '#3b82f6',
+                desc: 'A powerful, complex rehab power wheelchair known for its "ActiveHeight" seat elevator. User setups can vary drastically, so standard table recommendations are taller than manual chairs to accommodate larger battery bases and joy-stick clearance.'
+            },
+            'Invacare Tracer EX2': {
+                imgSrc: 'invacare_tracer.png', // Replace with your actual path
+                bgColor: '#10b981',
+                desc: 'A common, reliable manual wheelchair often used in temporary or long-term care settings. Users with Tracer models frequently prefer desk-length armrests to get closer to tables, although standard configurations can vary.'
+            },
+            'Quickie Q-Series': {
+                imgSrc: 'quickie_2.png', // Replace with your actual path
+                bgColor: '#f59e0b',
+                desc: 'One of the most popular lightweight manual wheelchair lines. Highly customizable. The standard preset here (23.5") assumes standard seat height and factory-standard armrests, but user measurement is highly encouraged due to its flexibility.'
+            },
+            'TiLite ZRA/TRA': {
+                imgSrc: 'tilite_zra.webp', // Replace with your actual path
+                bgColor: '#6366f1',
+                desc: 'A rigid-frame, "custom fit" ultralight chair. These are typically tailored to the individual user\'s body measurements. A ZRA user often has a very low profile, requiring precise desk height calibration to avoid shoulder strain.'
+            }
+        };
 
-    function savePreset() {
-        const val = document.getElementById('elbowHeight').value;
-        if (val) {
-            localStorage.setItem('userTableHeight', val);
-            alert("Height saved! Next time, just click 'Load'.");
-        } else {
-            alert("Please enter a height first.");
-        }
-    }
+        function setChair(shortName, height, fullName, element) {
+            // 1. Update Main UI (Highlight)
+            document.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
 
-    function loadPreset() {
-        const savedVal = localStorage.getItem('userTableHeight');
-        if (savedVal) {
-            document.getElementById('elbowHeight').value = savedVal;
-            calculateHeight();
-        } else {
-            alert("No saved height found.");
+            // Check if element is passed (for onload) or use event.currentTarget (for clicks)
+            const target = element || event.currentTarget;
+            if (target) target.classList.add('active');
+
+            document.getElementById('elbowHeight').value = height;
+            calculate();
+
+            // 2. Update Dynamic Info Panel
+            const data = chairData[fullName];
+            if (data) {
+                const infoPanel = document.getElementById('infoPanel');
+                const placeholder = document.getElementById('panelImgPlaceholder');
+
+                infoPanel.classList.add('active');
+                document.getElementById('panelTitle').innerText = fullName;
+                document.getElementById('panelDesc').innerText = data.desc;
+
+                // Change from text content to an <img> tag
+                placeholder.innerHTML = `<img src="${data.imgSrc}" alt="${fullName}" style="max-width: 90%; max-height: 90%;">`;
+
+                // Remove text-based styling (if applicable)
+                placeholder.style.backgroundColor = 'transparent';
+                placeholder.style.fontSize = '';
+                placeholder.style.fontWeight = '';
+            }
         }
-    }
-</script>
+
+        // --- Calculator Logic ---
+        function calculate() {
+            const val = document.getElementById('elbowHeight').value;
+            const output = document.getElementById('output');
+            if (val > 0) {
+                output.innerText = (parseFloat(val) + 0.5).toFixed(1) + '"';
+            } else {
+                output.innerText = '--';
+            }
+        }
+
+        function save() {
+            const val = document.getElementById('elbowHeight').value;
+            if (val) {
+                localStorage.setItem('user_chair_ht', val);
+                alert("Height saved successfully!");
+            }
+        }
+
+        function load() {
+            const saved = localStorage.getItem('user_chair_ht');
+            if (saved) {
+                document.getElementById('elbowHeight').value = saved;
+                calculate();
+                // Optional: You could hide the info panel again or keep it up
+            } else {
+                alert("No saved profile found.");
+            }
+        }
+    </script>
 
 </body>
+
 </html>
